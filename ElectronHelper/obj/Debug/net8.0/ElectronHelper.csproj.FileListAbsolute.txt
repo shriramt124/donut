@@ -1,6 +1,0 @@
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.AssemblyReference.cache
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.GeneratedMSBuildEditorConfig.editorconfig
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfoInputs.cache
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfo.cs
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.CoreCompileInputs.cache
-/home/runner/work/donut/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.sourcelink.json

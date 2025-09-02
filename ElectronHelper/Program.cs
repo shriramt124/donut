@@ -16,9 +16,6 @@ namespace ElectronHelper
 {
     class Program
     {
-        public void sessionIntiitalize(){
-            //runspace to execute for powershell c#
-        }
        
         static async Task Main(string[] args)
         {
@@ -228,7 +225,7 @@ param(
 )
 
 if (-not (Test-Path -LiteralPath $scriptPath)) {
-    throw \"PowerShell module script not found: $scriptPath\"
+    throw ""PowerShell module script not found: $scriptPath""
 }
 
 # Load the script so that its class becomes available in the session
@@ -237,14 +234,14 @@ if (-not (Test-Path -LiteralPath $scriptPath)) {
 # Create an instance of the class (default constructor)
 $instance = New-Object -TypeName $className
 if (-not $instance) {
-    throw \"Unable to create instance of class '$className' from script '$scriptPath'\"
+    throw ""Unable to create instance of class '$className' from script '$scriptPath'""
 }
 
 $type = $instance.GetType()
 $bindingFlags = [System.Reflection.BindingFlags]::Instance -bor [System.Reflection.BindingFlags]::Public -bor [System.Reflection.BindingFlags]::IgnoreCase
 $methods = $type.GetMethods($bindingFlags) | Where-Object { $_.Name -eq $methodName }
 if (-not $methods) {
-    throw \"Operation not found: $methodName in module $className\"
+    throw ""Operation not found: $methodName in module $className""
 }
 
 # If multiple overloads, prefer the first; advanced: could match on parameter names
@@ -257,7 +254,7 @@ foreach ($pi in $paramInfos) {
         $val = $paramsMap[$pi.Name]
     }
     elseif (-not $pi.HasDefaultValue) {
-        throw \"Required parameter '$($pi.Name)' not found in paramsJson\"
+        throw ""Required parameter '$($pi.Name)' not found in paramsJson""
     }
     else {
         $val = $pi.DefaultValue
@@ -268,14 +265,14 @@ foreach ($pi in $paramInfos) {
 }
 
 # Invoke the method using reflection to avoid quoting/injection issues
-    $ret = $method.Invoke($instance, $argList)
-    if ($ret -is [System.Threading.Tasks.Task]) {
-        # Await Task or Task[T]
-        $awaiter = $ret.GetAwaiter()
-        $awaiter.GetResult()
-    } else {
-        $ret
-    }
+$ret = $method.Invoke($instance, $argList)
+if ($ret -is [System.Threading.Tasks.Task]) {
+    # Await Task or Task[T]
+    $awaiter = $ret.GetAwaiter()
+    $awaiter.GetResult()
+} else {
+    $ret
+}
 ";
 
             ps.AddScript(invoker)
