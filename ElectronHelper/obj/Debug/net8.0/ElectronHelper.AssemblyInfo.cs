@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ElectronHelper")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25feb15717428dc2ff8e5a9c4ec8bc79793c2dbb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6ade1f4e4719ceff18940ee12a4457e9a068011")]
 [assembly: System.Reflection.AssemblyProductAttribute("ElectronHelper")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ElectronHelper")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

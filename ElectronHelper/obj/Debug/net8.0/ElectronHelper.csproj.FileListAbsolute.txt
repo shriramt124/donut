@@ -1,9 +1,3 @@
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.AssemblyReference.cache
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.GeneratedMSBuildEditorConfig.editorconfig
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfoInputs.cache
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfo.cs
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.CoreCompileInputs.cache
-/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.sourcelink.json
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ref/Microsoft.CSharp.dll
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ref/Microsoft.VisualBasic.Core.dll
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ref/Microsoft.VisualBasic.dll
@@ -188,7 +182,6 @@
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/scripts/script.ps1
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/scripts/script2.ps1
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/scripts/UserModule.ps1
-/workspaces/donut/ElectronHelper/bin/Debug/net8.0/ElectronHelper
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ElectronHelper.deps.json
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ElectronHelper.runtimeconfig.json
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/ElectronHelper.dll
@@ -424,6 +417,12 @@
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/runtimes/win/lib/net7.0/System.Speech.dll
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/runtimes/win/lib/net7.0/System.Threading.AccessControl.dll
 /workspaces/donut/ElectronHelper/bin/Debug/net8.0/runtimes/win/lib/net7.0/System.Windows.Extensions.dll
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.AssemblyReference.cache
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfoInputs.cache
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.AssemblyInfo.cs
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.csproj.CoreCompileInputs.cache
+/workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.sourcelink.json
 /workspaces/donut/ElectronHelper/obj/Debug/net8.0/Electron.95BFB577.Up2Date
 /workspaces/donut/ElectronHelper/obj/Debug/net8.0/ElectronHelper.dll
 /workspaces/donut/ElectronHelper/obj/Debug/net8.0/refint/ElectronHelper.dll
