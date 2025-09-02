@@ -1,0 +1,31 @@
+# .NET 8 LTS SDK image (compiler, tools, dotnet CLI)
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# 1) Basic dev QoL
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    DOTNET_NOLOGO=1 \
+    DOTNET_USE_POLLING_FILE_WATCHER=1
+
+# Optional: speed up builds if you bind a NuGet cache volume
+# ENV NUGET_PACKAGES=/home/vscode/.nuget/packages
+
+# 2) Create a non-root user (better for VS Code + file perms)
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+# 3) Common tools (git, curl, unzip) for restore/debug helpers
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git curl unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# 4) Work directory where your code will be mounted
+WORKDIR /workspaces
+
+# 5) Default to non-root
+USER $USERNAME
+
+# 6) Start an interactive shell by default
+CMD ["/bin/bash"]

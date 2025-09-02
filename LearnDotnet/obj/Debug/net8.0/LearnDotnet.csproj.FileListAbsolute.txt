@@ -1,0 +1,14 @@
+/workspaces/donut/LearnDotnet/bin/Debug/net8.0/LearnDotnet
+/workspaces/donut/LearnDotnet/bin/Debug/net8.0/LearnDotnet.deps.json
+/workspaces/donut/LearnDotnet/bin/Debug/net8.0/LearnDotnet.runtimeconfig.json
+/workspaces/donut/LearnDotnet/bin/Debug/net8.0/LearnDotnet.dll
+/workspaces/donut/LearnDotnet/bin/Debug/net8.0/LearnDotnet.pdb
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.AssemblyInfoInputs.cache
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.AssemblyInfo.cs
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.csproj.CoreCompileInputs.cache
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.dll
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/refint/LearnDotnet.dll
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.pdb
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/LearnDotnet.genruntimeconfig.cache
+/workspaces/donut/LearnDotnet/obj/Debug/net8.0/ref/LearnDotnet.dll
