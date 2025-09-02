@@ -5,10 +5,12 @@ using System.IO.Pipes;  // Named pipe communication
 using System.Text;  // Text encoding/decoding
 using System.Threading.Tasks; // Async programming
 using System.Reflection; // For loading classes dynamically
-using System.Management.Automation;/ PowerShell execution
+using System.Collections; // Hashtable
 using System.Collections.Generic;  // Lists, dictionaries, etc.
 using Newtonsoft.Json;  // JSON serialization
 using Newtonsoft.Json.Linq;// JSON manipulation
+using System.Management.Automation; // PowerShell execution
+using System.Management.Automation.Runspaces;
 
 namespace ElectronHelper
 {
@@ -103,58 +105,68 @@ namespace ElectronHelper
             }
             
             // Extract optional paramsJson (could be null)
-            JToken paramsJsonToken = command["paramsJson"];//always be object 
+            JToken paramsJsonToken = command["paramsJson"]; // always be object 
             object[] parameters = null;
 
             try
             {
-                // type module lets us find all the methods in the class
-                //it helps us create an instance of the class
-                //it can find the method with 
-                Type moduleType = FindModuleType(moduleName);
-                //WINDOW.pathname 
-                if (moduleType == null)
-                {
-                    return new { 
-                        status = "error", 
-                        error = $"Module not found: {moduleName}" 
-                    };
-                }
+                // Prefer executing a PowerShell class defined in scripts/<module>.ps1
+                string scriptsRoot = Path.Combine(AppContext.BaseDirectory, "scripts");
+                string scriptPath = Path.Combine(scriptsRoot, $"{moduleName}.ps1");
 
-                // Find the method or operation in the module class
-                MethodInfo methodInfo = FindMethodInfo(moduleType, operation);
-                if (methodInfo == null)
-                {
-                    return new { 
-                        status = "error", 
-                        error = $"Operation not found: {operation} in module {moduleName}" 
-                    };
-                }        
-
-                // Process parameters if they exist
-                if (paramsJsonToken != null && paramsJsonToken.Type != JTokenType.Null)
-                {
-                    //jo mthod info uper mila hai usko preprare karo pramatere se 
-                    parameters = PrepareParameters(methodInfo, paramsJsonToken);
-                }
-
-                // Create an instance of the module class
-                object moduleInstance = Activator.CreateInstance(moduleType);
-
-                // Invoke the method (operation) on the module instance
                 object result;
-                
-                // Check if the method is async (returns Task or Task<T>)
-                if (IsAsyncMethod(methodInfo))
+
+                if (File.Exists(scriptPath))
                 {
-                    // For async methods, we need to await the Task
-                    dynamic task = methodInfo.Invoke(moduleInstance, parameters);
-                    result = await task;
+                    // Execute the PowerShell class method inside the .ps1 script
+                    var psResult = ExecutePowerShellScriptMethod(
+                        scriptPath,
+                        moduleName,
+                        operation,
+                        paramsJsonToken as JObject
+                    );
+                    result = psResult;
                 }
                 else
                 {
-                    // For synchronous methods, we can invoke directly
-                    result = methodInfo.Invoke(moduleInstance, parameters);
+                    // Fall back to loading C# modules by reflection if available
+                    Type moduleType = FindModuleType(moduleName);
+                    if (moduleType == null)
+                    {
+                        return new {
+                            status = "error",
+                            error = $"Module not found as PowerShell script or C# type: {moduleName}"
+                        };
+                    }
+
+                    // Find the method or operation in the module class
+                    MethodInfo methodInfo = FindMethodInfo(moduleType, operation);
+                    if (methodInfo == null)
+                    {
+                        return new {
+                            status = "error",
+                            error = $"Operation not found: {operation} in module {moduleName}"
+                        };
+                    }
+
+                    // Process parameters if they exist
+                    if (paramsJsonToken != null && paramsJsonToken.Type != JTokenType.Null)
+                    {
+                        parameters = PrepareParameters(methodInfo, paramsJsonToken);
+                    }
+
+                    object moduleInstance = Activator.CreateInstance(moduleType);
+
+                    // Check if the method is async (returns Task or Task<T>)
+                    if (IsAsyncMethod(methodInfo))
+                    {
+                        dynamic task = methodInfo.Invoke(moduleInstance, parameters);
+                        result = await task;
+                    }
+                    else
+                    {
+                        result = methodInfo.Invoke(moduleInstance, parameters);
+                    }
                 }
 
                 // Return success response with result
@@ -181,6 +193,113 @@ namespace ElectronHelper
                     stackTrace = innerException.StackTrace
                 };
             }
+        }
+
+        // Execute a PowerShell class method defined in a script file.
+        // The script should declare a class whose name matches the file name (moduleName),
+        // and we will create an instance and invoke the specified method with paramsJson.
+        private static object ExecutePowerShellScriptMethod(string scriptPath, string moduleName, string methodName, JObject? paramsJson)
+        {
+            // Build a case-insensitive hashtable for parameter lookup in PowerShell
+            Hashtable? map = null;
+            if (paramsJson != null)
+            {
+                map = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                foreach (var prop in paramsJson.Properties())
+                {
+                    // Convert JToken -> CLR object; Newtonsoft handles primitives and nested structures
+                    map[prop.Name] = prop.Value.ToObject<object?>();
+                }
+            }
+
+            using var runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+
+            using var ps = PowerShell.Create();
+            ps.Runspace = runspace;
+
+            // Use a single param-ized script to avoid manual string interpolation issues.
+            string invoker = @"
+param(
+    [string]$scriptPath,
+    [string]$className,
+    [string]$methodName,
+    [System.Collections.IDictionary]$paramsMap
+)
+
+if (-not (Test-Path -LiteralPath $scriptPath)) {
+    throw \"PowerShell module script not found: $scriptPath\"
+}
+
+# Load the script so that its class becomes available in the session
+. $scriptPath
+
+# Create an instance of the class (default constructor)
+$instance = New-Object -TypeName $className
+if (-not $instance) {
+    throw \"Unable to create instance of class '$className' from script '$scriptPath'\"
+}
+
+$type = $instance.GetType()
+$bindingFlags = [System.Reflection.BindingFlags]::Instance -bor [System.Reflection.BindingFlags]::Public -bor [System.Reflection.BindingFlags]::IgnoreCase
+$methods = $type.GetMethods($bindingFlags) | Where-Object { $_.Name -eq $methodName }
+if (-not $methods) {
+    throw \"Operation not found: $methodName in module $className\"
+}
+
+# If multiple overloads, prefer the first; advanced: could match on parameter names
+$method = $methods[0]
+$paramInfos = $method.GetParameters()
+
+$argList = @()
+foreach ($pi in $paramInfos) {
+    if ($paramsMap -and $paramsMap.Contains($pi.Name)) {
+        $val = $paramsMap[$pi.Name]
+    }
+    elseif (-not $pi.HasDefaultValue) {
+        throw \"Required parameter '$($pi.Name)' not found in paramsJson\"
+    }
+    else {
+        $val = $pi.DefaultValue
+    }
+    # Convert to the declared parameter type for reliable invocation
+    $converted = [System.Management.Automation.LanguagePrimitives]::ConvertTo($val, $pi.ParameterType)
+    $argList += $converted
+}
+
+# Invoke the method using reflection to avoid quoting/injection issues
+    $ret = $method.Invoke($instance, $argList)
+    if ($ret -is [System.Threading.Tasks.Task]) {
+        # Await Task or Task[T]
+        $awaiter = $ret.GetAwaiter()
+        $awaiter.GetResult()
+    } else {
+        $ret
+    }
+";
+
+            ps.AddScript(invoker)
+              .AddArgument(scriptPath)
+              .AddArgument(moduleName)
+              .AddArgument(methodName)
+              .AddArgument(map ?? new Hashtable(StringComparer.OrdinalIgnoreCase));
+
+            var results = ps.Invoke();
+            if (ps.Streams.Error.Count > 0)
+            {
+                // Return the first error for simplicity
+                var err = ps.Streams.Error[0];
+                throw new Exception(err?.Exception?.Message ?? err?.ToString());
+            }
+
+            if (results == null || results.Count == 0)
+            {
+                return null!;
+            }
+
+            // If multiple pipeline outputs, return the last one
+            var last = results[^1];
+            return last?.BaseObject;
         }
 
         // Find a module type by name
