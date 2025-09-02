@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/workspaces/donut/ElectronHelper/ElectronHelper.csproj": {}
+    "/home/runner/work/donut/donut/ElectronHelper/ElectronHelper.csproj": {}
   },
   "projects": {
-    "/workspaces/donut/ElectronHelper/ElectronHelper.csproj": {
+    "/home/runner/work/donut/donut/ElectronHelper/ElectronHelper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/workspaces/donut/ElectronHelper/ElectronHelper.csproj",
+        "projectUniqueName": "/home/runner/work/donut/donut/ElectronHelper/ElectronHelper.csproj",
         "projectName": "ElectronHelper",
-        "projectPath": "/workspaces/donut/ElectronHelper/ElectronHelper.csproj",
-        "packagesPath": "/home/vscode/.nuget/packages/",
-        "outputPath": "/workspaces/donut/ElectronHelper/obj/",
+        "projectPath": "/home/runner/work/donut/donut/ElectronHelper/ElectronHelper.csproj",
+        "packagesPath": "/home/runner/.nuget/packages/",
+        "outputPath": "/home/runner/work/donut/donut/ElectronHelper/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/vscode/.nuget/NuGet/NuGet.Config"
+          "/home/runner/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,16 +32,21 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.PowerShell.SDK": {
+              "target": "Package",
+              "version": "[7.3.12, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -58,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.413/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.119/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
